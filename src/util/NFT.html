@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://unpkg.com/vue@3.2.29"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.29/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mapbox-gl@1.13.2/dist/mapbox-gl.min.js"></script>
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
@@ -179,7 +179,7 @@
             sources: {
               OSM: {
                 type: "raster",
-                tiles: ["http://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
                 tileSize: 256,
               },
             },
