@@ -30,7 +30,7 @@ export const SelectImage = () => {
               <img
                 src={imagePath}
                 alt="selected Image"
-                className="rounded-lg drop-shadow"
+                className="max-w-full max-h-full rounded-lg drop-shadow"
               />
             ) : (
               <>

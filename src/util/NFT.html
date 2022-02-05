@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/vue@3.2.29"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl@1.13.2/dist/mapbox-gl.min.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <title>!{Title}</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      #root {
+        background: !{BGColor};
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow-y: hidden;
+      }
+      .main-image {
+        background-image: url(!{ImagePath});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: right 50% bottom 50%;
+        flex-grow: 1;
+        margin: 0.5rem;
+        margin-bottom: 0;
+        border-top-right-radius: 0.5rem;
+        border-top-left-radius: 0.5rem;
+        filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
+          drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+      }
+      .content-container {
+        padding: 0.5rem;
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #111827;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .content-title {
+        color: white;
+        font-size: 2rem;
+        overflow-wrap: break-word;
+        font-family: "Anton", sans-serif;
+      }
+
+      .map-button {
+        background-color: white;
+        color: black;
+        cursor: pointer;
+        font-family: "Anton", sans-serif;
+        font-size: 1.5rem;
+        padding: 0.1rem;
+        border-radius: 0.5rem;
+        border: none;
+      }
+      .map-button:hover {
+        background-color: #9ca3af;
+      }
+      .map {
+        flex-grow: 1;
+        margin: 0.5rem;
+        margin-bottom: 0;
+        border-top-right-radius: 0.5rem;
+        border-top-left-radius: 0.5rem;
+        bottom: 0;
+        filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
+          drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+        border-top-right-radius: 0.5rem;
+        border-top-left-radius: 0.5rem;
+        background-color: #9ca3af;
+      }
+      .map-close {
+        position: relative;
+        z-index: 10;
+        background-color: transparent;
+        color: black;
+        font-size: 1.5rem;
+        cursor: pointer;
+        border: none;
+      }
+
+      .bottom-enter-active,
+      .bottom-leave-active {
+        opacity: 1;
+        transform: translate(0px, 0px);
+        transition: all 500ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      }
+
+      .bottom-enter,
+      .bottom-leave-to {
+        opacity: 0;
+        transform: translateY(100vh) translateY(0px);
+      }
+      .marker {
+        display: flex;
+        height: 1rem;
+        width: 1rem;
+        cursor: pointer;
+      }
+      .marker-1 {
+        position: absolute;
+        animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+        display: inline-flex;
+        height: 100%;
+        width: 100%;
+        border-radius: 50%;
+        opacity: 0.75;
+        background-color: !{Color};
+      }
+      .marker-2 {
+        position: relative;
+        display: inline-flex;
+        border-radius: 50%;
+        height: 1rem;
+        width: 1rem;
+        background-color: !{Color};
+      }
+      @keyframes ping {
+        75%,
+        100% {
+          transform: scale(2);
+          opacity: 0;
+        }
+      }
+      .mapboxgl-popup-content{
+        margin: 0;
+        padding: 0;
+        border-radius: 0.5rem;
+      }
+      .popup{
+        width: 200px;
+        border-radius: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <template id="marker">
+      <div class="marker">
+        <span class="marker-1"></span>
+        <span class="marker-2"></span>
+      </div>
+    </template>
+    <div id="root">
+      <div class="map" ref="mapContainer" v-if="state.isOpen"></div>
+      <div class="main-image" v-else></div>
+      <div class="content-container">
+        <h1 class="content-title">!{Title}</h1>
+        <button class="map-button" @click="state.isOpen=!state.isOpen">
+          {{state.isOpen?"Close":"Open"}} Map
+        </button>
+      </div>
+    </div>
+    <script>
+      const resize = () =>
+        (document.getElementById("root").style.height =
+          window.innerHeight + "px");
+      resize();
+      window.addEventListener("resize", resize);
+      const mapboxgl = window.mapboxgl;
+      const coord = [parseFloat("!{Lng}"), parseFloat("!{Lat}")];
+
+      const App = {
+        setup: () => {
+          const state = Vue.reactive({ isOpen: false });
+          const mapContainer = Vue.ref(null);
+          const mapStyle = Vue.reactive({
+            version: 8,
+            sources: {
+              OSM: {
+                type: "raster",
+                tiles: ["http://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                tileSize: 256,
+              },
+            },
+            layers: [
+              {
+                id: "OSM",
+                type: "raster",
+                source: "OSM",
+                minzoom: 0,
+                maxzoom: 18,
+              },
+            ],
+          });
+          Vue.watch(mapContainer, () => {
+            if (mapContainer.value) {
+              const map = new mapboxgl.Map({
+                container: mapContainer.value,
+                style: mapStyle,
+                center: coord,
+                zoom: 16,
+                maxZoom: 18,
+              });
+              const template = document.getElementById("marker");
+              const clone = document.importNode(template.content, true);
+              const el = clone.firstElementChild;
+
+              const popupTemplate = document.getElementById("popup");
+              const clonePopup = document.importNode(template.content, true);
+
+              new mapboxgl.Marker(el)
+                .setLngLat(coord)
+                .setPopup(
+                  new mapboxgl.Popup({ offset: 25 }).setHTML(
+                    `<img class="popup" src="!{ImagePath}" />`
+                  )
+                )
+                .addTo(map);
+            }
+          });
+          return { state, mapContainer };
+        },
+      };
+      Vue.createApp(App).mount("#root");
+    </script>
+  </body>
+</html>

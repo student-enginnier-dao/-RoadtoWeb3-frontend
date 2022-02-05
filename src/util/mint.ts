@@ -6,3 +6,7 @@ export const getLocation = (): Promise<GeolocationPosition> =>
       reject("window not found");
     }
   });
+
+export const mint = async () => {};
+
+export const generateCardImage = async () => {};

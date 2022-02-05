@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         anton: ["'Anton'"],
       },
+      maxWidth: {
+        "1/2": "50%",
+      },
     },
   },
   plugins: [],

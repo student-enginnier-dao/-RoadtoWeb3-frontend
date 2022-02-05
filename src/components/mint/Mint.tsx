@@ -1,6 +1,9 @@
 import { useIsOpenMint, useMintSteps, useValidation } from "@/hooks/mintHooks";
 import { Transition } from "@headlessui/react";
+import { CheckNFT } from "./CheckNFT";
+import { CreateMapImage } from "./CreateMapImage";
 import { GetLocation } from "./GetLocation";
+import { MintProcess } from "./MintProcess";
 import { SelectImage } from "./SelectImage";
 
 export const Mint = () => {
@@ -21,7 +24,7 @@ export const Mint = () => {
         onClick={() => setOpen(false)}
       >
         <div
-          className="overflow-x-hidden w-full h-full bg-slate-800 drop-shadow-lg sm:w-4/5 sm:max-w-lg sm:h-4/5 sm:rounded-lg"
+          className="overflow-x-hidden w-full h-full bg-slate-800 drop-shadow-lg sm:w-5/6 sm:max-w-screen-md sm:h-5/6 sm:rounded-lg"
           onClick={(e) => e.stopPropagation()}
         >
           <MintBody />
@@ -34,7 +37,7 @@ export const Mint = () => {
 const MintBody = () => {
   const [currentStep, setStep] = useMintSteps();
   const validations = useValidation();
-  const maxStep = 7;
+  const maxStep = 5;
   const nextStep = () => setStep(currentStep + 1);
   const backStep = () => setStep(currentStep - 1);
   return (
@@ -42,53 +45,31 @@ const MintBody = () => {
       <div className="relative grow">
         <SelectImage />
         <GetLocation />
-        <MintFormWrapper step={3}>
-          <h1 className="font-anton text-4xl text-white">Step3</h1>
-          <h1 className="font-anton text-4xl text-white">Step3</h1>
-          <h1 className="font-anton text-4xl text-white">Step3</h1>
-        </MintFormWrapper>
-        <MintFormWrapper step={4}>
-          <h1 className="font-anton text-4xl text-white">Step4</h1>
-        </MintFormWrapper>
+        <CreateMapImage />
+        <CheckNFT />
+        <MintProcess />
       </div>
-      <div className="flex gap-2 p-2 w-full">
-        {currentStep > 1 && (
-          <button className="home-button" onClick={backStep}>
-            Back
-          </button>
-        )}
-        <button
-          className="home-button"
-          onClick={nextStep}
-          disabled={!validations[currentStep - 1]}
-        >
-          Next
-        </button>
-        <div className="text-4xl text-gray-400 ">
-          {currentStep}/{maxStep}
-        </div>
-      </div>
+      {currentStep < 6 && (
+        <>
+          <div className="flex gap-2 p-2 w-full">
+            {currentStep > 1 && (
+              <button className="home-button" onClick={backStep}>
+                Back
+              </button>
+            )}
+            <button
+              className="home-button"
+              onClick={nextStep}
+              disabled={!validations[currentStep - 1]}
+            >
+              Next
+            </button>
+            <div className="text-4xl text-gray-400 ">
+              {currentStep}/{maxStep}
+            </div>
+          </div>
+        </>
+      )}
     </div>
-  );
-};
-const MintFormWrapper: React.FC<{
-  step: number;
-  className?: string;
-  children?: React.ReactNode;
-}> = ({ step, children, className }) => {
-  const [currentStep] = useMintSteps();
-  return (
-    <Transition
-      show={currentStep === step}
-      className={`w-full h-full flex flex-col  text-white ${className}`}
-      enter="transition-all duration-300"
-      enterFrom="translate-x-full"
-      enterTo="translate-x-0"
-      leave="transition-all duration-300"
-      leaveFrom="translate-x-0 absolute"
-      leaveTo="-translate-x-full absolute"
-    >
-      {children}
-    </Transition>
   );
 };
