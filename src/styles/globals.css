@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+html,
+#__next {
+  height: 100%;
+}
+
+.home-container::before {
+  content: "";
+  @apply absolute h-full w-full bg-slate-800;
+
+  clip-path: polygon(0% 100%, 0% 90%, 100% 20%, 100% 100%);
+}
+
+.home-container {
+  background-image: linear-gradient(
+    -225deg,
+    #2cd8d5 0%,
+    #6b8dd6 48%,
+    #8e37d7 100%
+  );
+}
+
+.home-button {
+  @apply p-2 font-anton text-3xl text-black bg-white rounded-lg w-full;
+}
+.home-button:disabled {
+  @apply bg-stone-400 cursor-not-allowed;
+}
+
+.modal-enter {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.modal-exit {
+  opacity: 1;
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+  transform: scale(0.9);
+}
+
+.loading-dot::after {
+  animation: dot-animation 1s infinite;
+  content: "";
+}
+
+@keyframes dot-animation {
+  0% {
+    content: "";
+  }
+  12.5% {
+    content: ".";
+  }
+  25% {
+    content: "..";
+  }
+  37.5% {
+    content: "...";
+  }
+  50% {
+    content: "....";
+  }
+}
