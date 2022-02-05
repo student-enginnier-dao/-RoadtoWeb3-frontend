@@ -8,7 +8,8 @@ export const Home = () => {
         <ShowNFTByMeta
           {...{
             title: "Kiyomizudera",
-            imagePath: "http://localhost:3000/title-image.webp",
+            imagePath:
+              "https://eloquent-nightingale-76e334.netlify.app//title-image.webp",
             color: "#0c4a6e",
             lng: 135.7848,
             lat: 34.995,
