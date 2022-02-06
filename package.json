@@ -18,6 +18,8 @@
     "html2canvas": "^1.4.1",
     "mapbox-gl": "^2.7.0",
     "next": "12.0.9",
+    "playwright-aws-lambda": "^0.7.0",
+    "playwright-core": "^1.18.1",
     "react": "17.0.2",
     "react-colorful": "^5.5.1",
     "react-dom": "17.0.2",

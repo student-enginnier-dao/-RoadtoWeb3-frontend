@@ -1,9 +1,11 @@
 import { useCradBlob, useShowMetaData } from "@/hooks/mintHooks";
+import * as MapboxLanguage from "@mapbox/mapbox-gl-language";
+import html2canvas from "html2canvas";
 import mapboxgl from "mapbox-gl";
 import { useRef, useState } from "react";
 import { MintFormWrapper } from "./MintFormWrapper";
 
-export const MintProcess = () => {
+export const GenerateImage = () => {
   const card = useRef(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const map = useRef<mapboxgl.Map>(null!);
@@ -14,9 +16,6 @@ export const MintProcess = () => {
     try {
       setIsProcessing(true);
       if (mapContainer.current && card.current && metaData && !map.current) {
-        const mapboxgl = (await import("mapbox-gl")).default;
-        const MapboxLanguage = (await import("@mapbox/mapbox-gl-language"))
-          .default as any;
         mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY || "";
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
@@ -36,14 +35,13 @@ export const MintProcess = () => {
         new mapboxgl.Marker(div)
           .setLngLat([metaData.lng, metaData.lat])
           .addTo(map.current);
-
         await new Promise((resolve) => map.current.on("load", resolve));
-        const html2canvas = await (await import("html2canvas")).default;
         const cardCanvas = await html2canvas(card.current, {});
         const cardBlob = await new Promise<Blob | null>((resolve) =>
           cardCanvas.toBlob(resolve, "image/webp", 0.75)
         );
-        setCardBlob(cardBlob);
+        console.log(cardBlob && URL.createObjectURL(cardBlob));
+        setCardBlob(null);
       }
     } catch (e) {
       setIsProcessing(false);
@@ -81,7 +79,7 @@ export const MintProcess = () => {
               className="max-w-1/2 rounded-l-lg"
             />
             <div className="flex relative flex-col grow">
-              <h1 className="px-1 font-anton text-2xl break-words bg-black">
+              <h1 className="inline-flex px-1 font-anton text-2xl break-words bg-black">
                 {metaData.title}
               </h1>
               <div className="grow bg-white" ref={mapContainer}></div>
@@ -93,3 +91,5 @@ export const MintProcess = () => {
     </MintFormWrapper>
   );
 };
+
+export default GenerateImage;

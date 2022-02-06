@@ -1,4 +1,4 @@
-import { NftContract, NftContract__factory } from "@/types/contracts";
+import { NftContract, NftContract__factory } from "@/util/contracts";
 import { useEffect, useState } from "react";
 import { useWeb3 } from "./useWeb3";
 

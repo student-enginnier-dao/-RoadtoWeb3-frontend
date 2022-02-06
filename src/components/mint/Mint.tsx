@@ -1,10 +1,12 @@
 import { useIsOpenMint, useMintSteps, useValidation } from "@/hooks/mintHooks";
 import { Transition } from "@headlessui/react";
+import dynamic from "next/dynamic";
 import { CheckNFT } from "./CheckNFT";
 import { CreateMapImage } from "./CreateMapImage";
 import { GetLocation } from "./GetLocation";
-import { MintProcess } from "./MintProcess";
 import { SelectImage } from "./SelectImage";
+
+const GenerateImage = dynamic(() => import("./GenerateImage"));
 
 export const Mint = () => {
   const [isOpen, setOpen] = useIsOpenMint();
@@ -47,7 +49,7 @@ const MintBody = () => {
         <GetLocation />
         <CreateMapImage />
         <CheckNFT />
-        <MintProcess />
+        <GenerateImage />
       </div>
       {currentStep < 6 && (
         <>
