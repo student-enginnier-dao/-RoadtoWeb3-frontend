@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MintFormWrapper } from "./MintFormWrapper";
 
 export const GenerateImage = () => {
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing] = useState(false);
 
   const loadMap = async () => {};
 
