@@ -2,7 +2,7 @@ import * as playwright from "playwright-aws-lambda";
 import ReactDOM from "react-dom/server";
 
 const styles = (props) => `
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Yusei+Magic&display=swap');
   *{
     margin:0;
     padding:0;
@@ -11,7 +11,7 @@ const styles = (props) => `
   html, body {
     height: 100%;
     overflow: hidden;
-    font-family: 'Anton', cursive;
+    font-family: 'Anton','Yusei Magic', cursive;
   }
 
   .wrapper{
