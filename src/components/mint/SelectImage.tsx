@@ -20,7 +20,7 @@ export const SelectImage = () => {
           In this step, we take images for use in NFT. Press the button on the
           right to take a picture.
         </p>
-        <div className="relative mt-2 h-2/3 sm:w-1/2">
+        <div className="overflow-hidden relative h-2/3 sm:w-1/2">
           <div
             className={`flex flex-col justify-center items-center w-full h-full rounded-lg ${
               imagePath ? "" : "bg-gray-100"
