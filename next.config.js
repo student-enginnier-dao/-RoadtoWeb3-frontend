@@ -8,6 +8,15 @@ const nextConfig = {
     });
     return config;
   },
+  redirects() {
+    return [
+      {
+        source: "/nfts/:path*", // リダイレクト元のURL
+        destination: "/", // リダイレクト先のURL
+        permanent: true, // 永続的なリダイレクトかのフラグ
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

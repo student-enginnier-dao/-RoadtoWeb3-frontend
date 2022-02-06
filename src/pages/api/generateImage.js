@@ -2,7 +2,7 @@ import * as playwright from "playwright-aws-lambda";
 import ReactDOM from "react-dom/server";
 
 const styles = (props) => `
-  @import url('https://fonts.googleapis.com/css2?family=Reggae+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
   *{
     margin:0;
     padding:0;
@@ -11,7 +11,7 @@ const styles = (props) => `
   html, body {
     height: 100%;
     overflow: hidden;
-    font-family: 'Reggae One', cursive;
+    font-family: 'Anton', cursive;
   }
 
   .wrapper{
@@ -21,7 +21,7 @@ const styles = (props) => `
     border-radius: 1rem;
     overflow: hidden;
     display:flex;
-    padding:1rem;
+    padding:1.5rem;
   }
   .container{
     display:flex;
@@ -29,14 +29,17 @@ const styles = (props) => `
     height:100%;
     border-radius: 1rem;
     overflow: hidden;
+    filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
   }
   .image{
-    max-width:50%;
+    max-width:55%;
     max-height:100%;
-    background-color:white;
+    background-color:#334155;
+    object-fit:contain;
   }
   .title{
     padding:2px;
+    padding-left:1rem;
     font-size:4rem;
     color:white;
     background-color:black;
@@ -88,7 +91,8 @@ const script = (props) => `
     ],
   };
   const coord = [parseFloat("${props.lng}"), parseFloat("${props.lat}")];
-  document.getElementById("image").addEventListener("load",()=>{
+  const loadMap = () => {
+    console.log("image load");
     const map = new mapboxgl.Map({
       container: "map",
       style: mapStyle,
@@ -99,10 +103,11 @@ const script = (props) => `
     const template = document.getElementById("marker");
     const clone = document.importNode(template.content, true);
     const el = clone.firstElementChild;
-    new mapboxgl.Marker(el)
-      .setLngLat(coord)
-      .addTo(map);
-  })
+    new mapboxgl.Marker(el).setLngLat(coord).addTo(map);
+  };
+  const image = document.getElementById("image");
+  image.src='${props.imagePath}'
+  image.addEventListener("load",loadMap)
 `;
 
 const Content = (props) => (
@@ -123,7 +128,7 @@ const Content = (props) => (
       </template>
       <div className="wrapper">
         <div className="container">
-          <img className="image" id="image" src={props.imagePath} />
+          <img className="image" id="image" />
           <div className="content">
             <h1 className="title">{props.title}</h1>
             <div className="map" id="map"></div>
@@ -144,19 +149,24 @@ const defaultMeta = {
   bg: `linear-gradient(45deg,#10b981 0%,#06b6d4 100%)`,
 };
 
+let browser;
+
 export default async (req, res) => {
   try {
     if (req.method === "POST") {
       const viewport = { width: 1200, height: 630 };
-      const browser = await playwright.launchChromium({ headless: true });
+      browser =
+        browser || (await playwright.launchChromium({ headless: true }));
       const page = await browser.newPage({ viewport });
-      console.log(req.body);
       const props = { ...defaultMeta, ...req.body };
       const markup = ReactDOM.renderToStaticMarkup(<Content {...props} />);
       const html = `<!doctype html>${markup}`;
       await page.setContent(html, { waitUntil: "networkidle" });
-      const image = await page.screenshot({ type: "png" });
-      await browser.close();
+      const image = await page.screenshot({
+        type: "png",
+        omitBackground: true,
+      });
+      await page.close();
       res.setHeader(
         "Cache-Control",
         "s-maxage=31536000, stale-while-revalidate"
@@ -170,4 +180,3 @@ export default async (req, res) => {
     res.send("some error happened");
   }
 };
-//={"title":"Test","imagePath":"https://eloquent-nightingale-76e334.netlify.app//title-image.webp","color":"#0ea5e9","lat":34.6709,"lng":135.6175,"bg":"linear-gradient(1.1555555555555554deg,#c587af 0%,#36931f 100%)"}

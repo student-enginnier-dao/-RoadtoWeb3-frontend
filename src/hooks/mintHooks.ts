@@ -1,6 +1,7 @@
 import { NFTMetaStore } from "@/types/nftMeta";
 import {
   cardBlob,
+  cardUrl,
   forShowMeta,
   isOpenMint,
   mintData,
@@ -39,3 +40,5 @@ export const useSelectedImagePath = () => useRecoilValue(selectedImagePath);
 export const useValidation = () => useRecoilValue(stepValidation);
 
 export const useShowMetaData = () => useRecoilValue(forShowMeta);
+
+export const useCardUrl = () => useRecoilValue(cardUrl);

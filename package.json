@@ -12,9 +12,13 @@
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@mapbox/mapbox-gl-language": "^1.0.0",
+    "@pinata/sdk": "^1.1.23",
     "@types/react-color": "^3.0.6",
+    "browser-image-compression": "^1.0.17",
     "color-hash": "^2.0.1",
+    "data-uri-to-buffer": "^4.0.0",
     "ethers": "^5.5.4",
+    "formidable": "^2.0.1",
     "html2canvas": "^1.4.1",
     "mapbox-gl": "^2.7.0",
     "next": "12.0.9",

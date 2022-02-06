@@ -7,6 +7,17 @@ export const getLocation = (): Promise<GeolocationPosition> =>
     }
   });
 
-export const mint = async () => {};
-
-export const generateCardImage = async () => {};
+export const uploadFiles = async (files: {
+  [id in string]: Blob;
+}) => {
+  const formData = new FormData();
+  for (const [id, file] of Object.entries(files)) formData.append(id, file);
+  const res = await fetch("/api/uploadToIpfs", {
+    method: "POST",
+    body: formData,
+  });
+  const result = (await res.json()) as {
+    [id in string]: { IpfsHash: string; PinSize: number };
+  };
+  return result;
+};

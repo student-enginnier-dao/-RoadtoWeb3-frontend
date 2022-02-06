@@ -1,10 +1,53 @@
+import {
+  useCardUrl,
+  useCradBlob,
+  useMintMeta,
+  useShowMetaData,
+} from "@/hooks/mintHooks";
+import imageCompression from "browser-image-compression";
 import { useState } from "react";
 import { MintFormWrapper } from "./MintFormWrapper";
 
 export const GenerateImage = () => {
-  const [isProcessing] = useState(false);
+  const [mintData] = useMintMeta();
+  const showData = useShowMetaData();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const setCardBlob = useCradBlob()[1];
+  const cardUrl = useCardUrl();
 
-  const loadMap = async () => {};
+  const loadMap = async () => {
+    setIsProcessing(true);
+    try {
+      const { image } = mintData;
+      if (image && !cardUrl) {
+        const compressedImage = await imageCompression(image, {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 630,
+        });
+        const dataURL = await new Promise((resolve) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(compressedImage);
+          fileReader.onload = function () {
+            resolve(this.result);
+          };
+        });
+        const postData = { ...showData, imagePath: dataURL };
+        const response = await fetch("/api/generateImage", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        });
+        const cardBlob = await response.blob();
+        setCardBlob(cardBlob);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <MintFormWrapper step={5}>
@@ -24,6 +67,14 @@ export const GenerateImage = () => {
         >
           Start Generate
         </button>
+        <div className="aspect-[120/63] flex justify-center items-center w-full bg-gray-50 rounded-lg">
+          {cardUrl && <img src={cardUrl} />}
+          {isProcessing && (
+            <p className="font-anton text-2xl text-gray-900 loading-dot">
+              Now Loading
+            </p>
+          )}
+        </div>
       </div>
     </MintFormWrapper>
   );

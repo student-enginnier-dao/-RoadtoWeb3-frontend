@@ -5,6 +5,7 @@ import { CheckNFT } from "./CheckNFT";
 import { CreateMapImage } from "./CreateMapImage";
 import { GetLocation } from "./GetLocation";
 import { SelectImage } from "./SelectImage";
+import { UploadAndMint } from "./UploadAndMint";
 
 const GenerateImage = dynamic(() => import("./GenerateImage"));
 
@@ -39,7 +40,7 @@ export const Mint = () => {
 const MintBody = () => {
   const [currentStep, setStep] = useMintSteps();
   const validations = useValidation();
-  const maxStep = 5;
+  const maxStep = 6;
   const nextStep = () => setStep(currentStep + 1);
   const backStep = () => setStep(currentStep - 1);
   return (
@@ -50,6 +51,7 @@ const MintBody = () => {
         <CreateMapImage />
         <CheckNFT />
         <GenerateImage />
+        <UploadAndMint />
       </div>
       {currentStep < 6 && (
         <>

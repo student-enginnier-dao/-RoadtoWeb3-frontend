@@ -21,7 +21,7 @@ export const CreateMapImage = () => {
             value={metaData.title}
             onChange={onTitleChange}
           />
-          <label className="font-anton text-3xl">Choose BackGround Color</label>
+          <label className="font-anton text-3xl">Choose Pin Color</label>
           <HexColorPicker
             color={metaData.color}
             onChange={(color) => setMetaData({ color })}

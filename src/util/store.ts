@@ -21,6 +21,13 @@ export const selectedImagePath = selector({
   },
 });
 
+export const cardUrl = selector({
+  key: "cardUrl",
+  get({ get }) {
+    return get(cardBlob) && URL.createObjectURL(get(cardBlob as any));
+  },
+});
+
 export const stepValidation = selector({
   key: "validation",
   get({ get }) {
