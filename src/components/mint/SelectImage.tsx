@@ -22,16 +22,13 @@ export const SelectImage = () => {
         </p>
         <div className="overflow-hidden relative mt-2 h-2/3 sm:w-1/2">
           <div
-            className={`flex flex-col justify-center items-center w-full h-full rounded-lg ${
+            className={`flex flex-col justify-center items-center  w-full h-full rounded-lg bg-cover ${
               imagePath ? "" : "bg-gray-100"
             }`}
+            style={{ backgroundImage: `url(${imagePath})` }}
           >
             {imagePath ? (
-              <img
-                src={imagePath}
-                alt="selected Image"
-                className="max-w-full max-h-full rounded-lg drop-shadow"
-              />
+              ""
             ) : (
               <>
                 <div className="flex z-10 text-lg font-bold text-gray-600">

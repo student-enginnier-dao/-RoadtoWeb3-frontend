@@ -43,7 +43,7 @@ export const UploadAndMint = () => {
   };
   const mint = async (uploadedMetaResult: any) => {
     if (contract) {
-      await contract.choice(false);
+      await contract.choice(false, { gasLimit: 1000000 });
       const result = await contract.onlymint(
         `ipfs://${uploadedMetaResult.IpfsHash}`
       );
@@ -52,7 +52,7 @@ export const UploadAndMint = () => {
   };
   const mintNizi = async (uploadedMetaResult: any) => {
     if (contract) {
-      await contract.choice(true);
+      await contract.choice(true, { gasLimit: 1000000 });
       await contract.deposit({ value: ethers.utils.parseEther("0.1") });
       const result = await contract.secondmint(
         `ipfs://${uploadedMetaResult.IpfsHash}`
