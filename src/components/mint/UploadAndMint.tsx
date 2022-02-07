@@ -147,9 +147,9 @@ export const UploadAndMint = () => {
         <label>Whether to allow resale (there is a fee)</label>
       </div>
       {result && (
-        <p className="mx-4 text-xl">
+        <p className="mx-4 text-xl text-center">
           Mint Process All Done!! You can see your NFT on
-          <a href={result} className="text-r ed-500">
+          <a href={result} className="text-red-500">
             this opensea link.
           </a>
           (It will take some time for OpenSea to reflect the results.)
