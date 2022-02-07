@@ -3,6 +3,7 @@ import { useContract } from "@/hooks/useContract";
 import { createNFTHTML } from "@/util/createNftHtml";
 import { uploadFiles } from "@/util/mint";
 import imageCompression from "browser-image-compression";
+import { ethers } from "ethers";
 import { useState } from "react";
 import { MintFormWrapper } from "./MintFormWrapper";
 
@@ -11,6 +12,7 @@ export const UploadAndMint = () => {
   const [mintData] = useMintMeta();
   const [cardBlob] = useCradBlob();
   const [isNizi, setIsNizi] = useState(false);
+  const [result, setResult] = useState<string>("");
   const contract = useContract();
   const [status, setStatus] = useState<string | null>(null);
   const mintProcess = async () => {
@@ -22,15 +24,21 @@ export const UploadAndMint = () => {
         setStatus("uploading metadata to IPFS");
 
         const uploadedMetaResult = await uploadMetadata(uploadResult);
+        setStatus("Carving it into the blockchain.");
         console.log(uploadedMetaResult);
-        if (isNizi) {
-          await mintNizi();
-        } else {
-          await mint(uploadedMetaResult);
-        }
+        const mintResult = isNizi
+          ? await mintNizi(uploadedMetaResult)
+          : await mint(uploadedMetaResult);
+        mintResult &&
+          setResult(
+            `${process.env.NEXT_PUBLIC_OPENSEA_URI}/${mintResult.hash}`
+          );
+
+        setStatus("DONE!!");
       }
     } catch (e) {
       console.error(e);
+      setStatus("some error happened");
     }
   };
   const mint = async (uploadedMetaResult: any) => {
@@ -39,10 +47,19 @@ export const UploadAndMint = () => {
       const result = await contract.onlymint(
         `ipfs://${uploadedMetaResult.IpfsHash}`
       );
-      console.log(result);
+      return result;
     }
   };
-  const mintNizi = async () => {};
+  const mintNizi = async (uploadedMetaResult: any) => {
+    if (contract) {
+      await contract.choice(true);
+      await contract.deposit({ value: ethers.utils.parseEther("0.1") });
+      const result = await contract.secondmint(
+        `ipfs://${uploadedMetaResult.IpfsHash}`
+      );
+      return result;
+    }
+  };
   const upload = async () => {
     const { image } = mintData;
     if (cardBlob && image) {
@@ -104,7 +121,8 @@ export const UploadAndMint = () => {
         Step 6: Mint!!!!
       </h2>
       <p className="mx-2 text-2xl">
-        Last step. Mint by clicking on the button below
+        Last step. Mint by clicking on the button below. You will be asked to
+        sign twice (or three times if you have enabled resale), which is normal.
       </p>
       <button
         className="p-2 mx-4 mt-16 font-anton text-4xl bg-gradient-to-r from-cyan-500 via-pink-500 to-blue-500 rounded-lg"
@@ -112,7 +130,9 @@ export const UploadAndMint = () => {
         disabled={Boolean(status)}
       >
         {status ? (
-          <span className="loading-dot">{status}</span>
+          <span className={`${status !== "DONE!!" && "loading-dot"}`}>
+            {status}
+          </span>
         ) : (
           "Start Mint Process!!!"
         )}
@@ -122,9 +142,19 @@ export const UploadAndMint = () => {
           type="checkbox"
           className="w-5 h-5"
           onChange={(e) => setIsNizi(e.target.checked)}
+          disabled={Boolean(status)}
         />
         <label>Whether to allow resale (there is a fee)</label>
       </div>
+      {result && (
+        <p className="mx-4 text-xl">
+          Mint Process All Done!! You can see your NFT on
+          <a href={result} className="text-r ed-500">
+            this opensea link.
+          </a>
+          (It will take some time for OpenSea to reflect the results.)
+        </p>
+      )}
     </MintFormWrapper>
   );
 };

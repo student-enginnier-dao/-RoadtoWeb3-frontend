@@ -155,8 +155,7 @@ export default async (req, res) => {
   try {
     if (req.method === "POST") {
       const viewport = { width: 1200, height: 630 };
-      browser =
-        browser || (await playwright.launchChromium({ headless: true }));
+      const browser = await playwright.launchChromium({ headless: true });
       const page = await browser.newPage({ viewport });
       const props = { ...defaultMeta, ...req.body };
       const markup = ReactDOM.renderToStaticMarkup(<Content {...props} />);
@@ -166,7 +165,7 @@ export default async (req, res) => {
         type: "png",
         omitBackground: true,
       });
-      await page.close();
+      await browser.close();
       res.setHeader(
         "Cache-Control",
         "s-maxage=31536000, stale-while-revalidate"

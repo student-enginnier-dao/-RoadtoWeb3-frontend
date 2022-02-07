@@ -38,6 +38,7 @@ export const switchChain = async ({
       await provider.send("wallet_addEthereumChain", [chainParameter]);
     }
     await provider.send("wallet_switchEthereumChain", [{ chainId }]);
+    window.location.reload();
   }
 };
 
